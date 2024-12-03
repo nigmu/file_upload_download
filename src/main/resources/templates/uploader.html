@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>File Upload</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+
+        :root {
+            --primary-color: #3b82f6;
+            --secondary-color: #10b981;
+            --background-light: #f3f4f6;
+            --text-dark: #1f2937;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--background-light) 0%, #e5e7eb 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .upload-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .upload-container:hover {
+            transform: translateY(-10px);
+        }
+
+        .upload-header {
+            margin-bottom: 30px;
+        }
+
+        .upload-header h1 {
+            color: var(--text-dark);
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .upload-header p {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-label {
+            display: block;
+            border: 2px dashed var(--primary-color);
+            border-radius: 10px;
+            padding: 50px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-label:hover {
+            background-color: rgba(59, 130, 246, 0.05);
+            border-color: var(--secondary-color);
+        }
+
+        .file-label span {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .file-name {
+            margin-top: 15px;
+            color: var(--text-dark);
+            font-size: 0.9rem;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .upload-btn, .download-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .download-btn {
+            background-color: var(--secondary-color);
+        }
+
+        .upload-btn:hover, .download-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .upload-btn:disabled {
+            background-color: #93c5fd;
+            cursor: not-allowed;
+        }
+
+        .download-btn {
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #status {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        #status.success {
+            color: var(--secondary-color);
+        }
+
+        #status.error {
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body>
+<div class="upload-container">
+    <div class="upload-header">
+        <h1>Upload Your File</h1>
+        <p>Select a file to upload to our secure server</p>
+    </div>
+
+    <form id="uploadForm">
+        <div class="file-input-wrapper">
+            <input type="file" id="fileInput" class="file-input" name="file" required>
+            <label for="fileInput" class="file-label">
+                <span>Choose a file</span> or drag and drop here
+                <div class="file-name" id="fileName"></div>
+            </label>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="upload-btn" id="uploadButton" disabled>Upload</button>
+            <a href="http://localhost:8080/list-files" class="download-btn">Download Files</a>
+        </div>
+    </form>
+
+    <div id="status"></div>
+</div>
+
+<script>
+    const fileInput = document.getElementById('fileInput');
+    const fileName = document.getElementById('fileName');
+    const uploadButton = document.getElementById('uploadButton');
+    const statusDiv = document.getElementById('status');
+
+    fileInput.addEventListener('change', function() {
+        if (this.files && this.files.length > 0) {
+            fileName.textContent = this.files[0].name;
+            uploadButton.disabled = false;
+        }
+    });
+
+    document.getElementById('uploadForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        uploadButton.disabled = true;
+        uploadButton.textContent = 'Uploading...';
+
+        var formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/upload-file', true);
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                statusDiv.innerHTML = 'File uploaded successfully!';
+                statusDiv.className = 'success';
+            } else {
+                statusDiv.innerHTML = 'File upload failed.';
+                statusDiv.className = 'error';
+            }
+            uploadButton.disabled = false;
+            uploadButton.textContent = 'Upload';
+        };
+        xhr.send(formData);
+    });
+</script>
+</body>
+</html>

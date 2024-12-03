@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>File List</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+
+        :root {
+            --primary-color: #3b82f6;
+            --secondary-color: #10b981;
+            --background-light: #f3f4f6;
+            --text-dark: #1f2937;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--background-light) 0%, #e5e7eb 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .file-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 700px;
+            transition: transform 0.3s ease;
+        }
+
+        .file-container:hover {
+            transform: translateY(-5px);
+        }
+
+        .file-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .file-header h1 {
+            color: var(--text-dark);
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .file-header p {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .file-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+        }
+
+        .file-table th {
+            text-align: left;
+            padding: 10px 15px;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .file-table tr {
+            background-color: #f9fafb;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .file-table tr:hover {
+            background-color: rgba(59, 130, 246, 0.05);
+            transform: scale(1.01);
+        }
+
+        .file-table td {
+            padding: 15px;
+            color: var(--text-dark);
+            font-size: 0.9rem;
+        }
+
+        .download-link {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .download-link:hover {
+            background-color: #2563eb;
+            transform: scale(1.05);
+        }
+
+        .upload-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .upload-link:hover {
+            color: #059669;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #6b7280;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="file-container">
+    <div class="file-header">
+        <h1>Your Files</h1>
+        <p>List of uploaded files available for download</p>
+    </div>
+
+    <table class="file-table">
+        <thead>
+        <tr>
+            <th>File Name</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Placeholder for Thymeleaf iteration -->
+        <tr th:each="file : ${files}">
+            <td th:text="${file}"></td>
+            <td>
+                <a th:href="@{/download(fileName=${file})}" class="download-link">Download</a>
+            </td>
+        </tr>
+        <!-- Empty state -->
+        <tr th:if="${#lists.isEmpty(files)}" class="empty-state">
+            <td colspan="2">
+                No files available. Upload a file to get started!
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a href="http://localhost:8080/uploader" class="upload-link">← Back to Upload</a>
+</div>
+</body>
+</html>
